@@ -53,6 +53,13 @@ import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.components.Book
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.util.CommonAlertDialog
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.util.showCustomToast
 
+/**
+ * The root composable for the Dashboard screen.
+ * This is the main entry point for the user after the splash screen.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param sharedViewModel The ViewModel for sharing data between screens.
+ */
 @Composable
 fun DashboardRootUI(
     navController: NavController,
@@ -67,10 +74,10 @@ fun DashboardRootUI(
     val sharedState = sharedViewModel.sharedState.collectAsState().value
 
 
-    // Define an infinite transition
+    // Define an infinite transition for a simple animation.
     val infiniteTransition = rememberInfiniteTransition(label = "")
 
-    // Create scale and color animations
+    // Create a scale animation to draw the user's attention to the main action.
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.2f,
@@ -86,7 +93,7 @@ fun DashboardRootUI(
         sharedViewModel.onEvent(SharedEvents.ClearToastMessage)
     }
 
-    // Intercept back press
+    // Intercept the back press to show an exit confirmation dialog.
     BackHandler {
         showExitDialog.value = true
     }

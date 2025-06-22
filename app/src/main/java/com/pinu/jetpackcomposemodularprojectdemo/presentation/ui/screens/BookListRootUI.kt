@@ -52,6 +52,12 @@ import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.theme.SurfaceCo
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.theme.TextPrimary
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.util.RenderScreen
 
+/**
+ * The root composable for the Book List screen.
+ * This function is responsible for initializing the ViewModels and observing the state.
+ *
+ * @param navController The NavController for navigating between screens.
+ */
 @Composable
 fun BookListRootUI(
     navController: NavController
@@ -74,6 +80,14 @@ fun BookListRootUI(
         })
 }
 
+/**
+ * The main screen for displaying a list of books.
+ *
+ * @param bookState The state of the book list screen.
+ * @param favouritesState The state of the favourites screen.
+ * @param navController The NavController for navigating between screens.
+ * @param onEvent A function to handle book-specific events.
+ */
 @Preview(showBackground = true)
 @Composable
 fun BookListScreen(
@@ -113,7 +127,8 @@ fun BookListScreen(
                     value = searchQuery.value,
                     onValueChange = { value ->
                         searchQuery.value = value
-                        // based on requirement
+                        // The search is triggered only when the query length is greater than 5.
+                        // This is based on a specific requirement to avoid unnecessary searches.
                         if (searchQuery.value.length > 5) {
                             onEvent(BooksEvents.OnSearchBooksByName(searchQuery.value))
                         }

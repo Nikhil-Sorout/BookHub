@@ -92,6 +92,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
+/**
+ * The root composable for the Profile screen.
+ * This function is responsible for initializing the ViewModel and observing the state.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param sharedViewModel The ViewModel for sharing data between screens.
+ */
 @Composable
 fun ProfileRootUI(
     navController: NavHostController = rememberNavController(),
@@ -109,7 +116,7 @@ fun ProfileRootUI(
             when(event){
                 is ProfileEvents.OnNavigateBack -> navController.popBackStack()
                 else -> {
-                    // do nothing
+                    // All other events are handled by the ViewModel.
                 }
             }
             dashboardViewModel.onEvent(event)
@@ -117,6 +124,15 @@ fun ProfileRootUI(
     )
 }
 
+/**
+ * The main screen for displaying and editing user profile information.
+ *
+ * @param profileState The state of the profile screen.
+ * @param sharedState The shared state between screens.
+ * @param navController The NavController for navigating between screens.
+ * @param onSharedEvents A function to handle shared events.
+ * @param onEvent A function to handle profile-specific events.
+ */
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreen(
@@ -143,13 +159,14 @@ fun ProfileScreen(
     val context = LocalContext.current
     val selectedImage = remember { mutableStateOf<Any?>(null) }
 
-    // Launcher for permission request
+    // Launcher for handling the result of the permission request.
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { _ ->
         showImagePickerDialog.value = true
     }
 
+    // Launcher for handling the result of taking a picture with the camera.
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
@@ -159,6 +176,7 @@ fun ProfileScreen(
         }
     }
 
+    // Launcher for handling the result of selecting an image from the gallery.
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -168,6 +186,12 @@ fun ProfileScreen(
         }
     }
 
+    /**
+     * Validates the user's input data.
+     *
+     * @param error A function to be called when validation fails.
+     * @param onValidData A function to be called when validation succeeds.
+     */
     fun isValidData(
         error: (String) -> Unit = {},
         onValidData: () -> Unit = {}
@@ -191,10 +215,12 @@ fun ProfileScreen(
         }
     }
 
+    // Fetch profile data when the screen is first launched.
     LaunchedEffect(Unit) {
         onEvent(ProfileEvents.FetchProfileData)
     }
 
+    // Update the UI with the user's profile data when it's available.
     LaunchedEffect(profileState.userProfileData != null) {
         userName.value = profileState.userProfileData?.name ?: ""
         userEmail.value = profileState.userProfileData?.email ?: ""
@@ -205,6 +231,7 @@ fun ProfileScreen(
     }
 
 
+    // Show a toast message when a new message is available in the shared state.
     LaunchedEffect(key1 = sharedState.toastMessage) {
         showCustomToast(context = context, toastMessage = sharedState.toastMessage)
         onSharedEvents(SharedEvents.ClearToastMessage)
@@ -324,6 +351,21 @@ fun ProfileScreen(
     }
 }
 
+/**
+ * A composable that displays the user's profile form.
+ *
+ * @param focusManager The focus manager for handling focus changes.
+ * @param userName The user's name.
+ * @param userEmail The user's email.
+ * @param userMobileNumber The user's mobile number.
+ * @param gender The user's gender.
+ * @param selectedGender The currently selected gender.
+ * @param onNameChange A function to be called when the name changes.
+ * @param onEmailChange A function to be called when the email changes.
+ * @param onMobileNumberChange A function to be called when the mobile number changes.
+ * @param onGenderChange A function to be called when the gender changes.
+ * @param onGenderSelected A function to be called when a gender is selected.
+ */
 @Composable
 fun ProfileForm(
     focusManager: FocusManager,
@@ -434,6 +476,13 @@ fun ProfileForm(
     }
 }
 
+/**
+ * A composable that displays the user's profile picture.
+ *
+ * @param isUploadingProfilePic A boolean to indicate if the profile picture is being uploaded.
+ * @param selectedImage The selected image to be displayed.
+ * @param showImagePickerDialog A function to be called when the user wants to change the profile picture.
+ */
 @Composable
 fun ProfilePic(
     isUploadingProfilePic: Boolean = false,
@@ -479,6 +528,12 @@ fun ProfilePic(
 }
 
 
+/**
+ * A composable that displays a Snackbar.
+ * This is the recommended way to show a Snackbar in Material3.
+ *
+ * @param snackBarHostState The state of the Snackbar.
+ */
 @Composable
 fun ShowSnackBar(snackBarHostState: SnackbarHostState) {
     // latest way of material3 to show snackBar
@@ -496,6 +551,13 @@ fun ShowSnackBar(snackBarHostState: SnackbarHostState) {
     }
 }
 
+/**
+ * A composable for the "Add" or "Update" button at the bottom of the screen.
+ *
+ * @param isLoading A boolean to indicate if the button should be in a loading state.
+ * @param buttonText The text to be displayed on the button.
+ * @param onAddUpdateClicked A function to be called when the button is clicked.
+ */
 @Composable
 fun ProfileAddUpdateCTA(
     isLoading: Boolean = false,

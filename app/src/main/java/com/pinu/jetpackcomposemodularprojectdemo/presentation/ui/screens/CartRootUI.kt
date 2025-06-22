@@ -61,6 +61,13 @@ import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.theme.SurfaceCo
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.util.CommonAlertDialog
 import com.pinu.jetpackcomposemodularprojectdemo.presentation.ui.util.showCustomToast
 
+/**
+ * The root composable for the Cart screen.
+ * This function is responsible for initializing the ViewModel and observing the state.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param sharedViewModel The ViewModel for sharing data between screens.
+ */
 @Composable
 fun CartRootUI(navController: NavController, sharedViewModel: SharedViewModel) {
 
@@ -89,13 +96,24 @@ fun CartRootUI(navController: NavController, sharedViewModel: SharedViewModel) {
                 navController.navigate(route = NavigationRoutes.BookDetailScreen.getBookDetail(event.bookId))
             }
 
-            else -> {}
+            else -> {
+                // Do nothing for other events
+            }
         }
 
         cartViewModel.onEvent(event)
     }
 }
 
+/**
+ * The main screen for displaying the user's shopping cart.
+ *
+ * @param cartState The state of the cart screen.
+ * @param sharedState The shared state between screens.
+ * @param navController The NavController for navigating between screens.
+ * @param onSharedEvents A function to handle shared events.
+ * @param onEvent A function to handle cart-specific events.
+ */
 @Preview(showBackground = true)
 @Composable
 fun CartScreenUI(
@@ -195,6 +213,10 @@ fun CartScreenUI(
 
 
             } else {
+                // This part of the screen is shown when the cart is empty.
+                // It currently displays a "Payment Successful" message, which might be confusing
+                // if the user hasn't just made a payment.
+                // A better approach might be to show a "Your cart is empty" message.
                 if (cartState.isLoading.not() && cartState.isLoadingForPayment.not() &&
                     cartState.cartItemResponse?.data?.items?.isEmpty() == true
                 ) {
